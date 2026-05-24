@@ -1,59 +1,143 @@
-# WhatsApp API + n8n Integration
+# WhatsApp API V2 + n8n
 
-API simples desenvolvida com `whatsapp-web.js` para integração com o n8n, permitindo:
+API de automação WhatsApp desenvolvida com Node.js, Express e whatsapp-web.js, integrada ao n8n para automações empresariais e fluxos financeiros.
 
-* Envio de mensagens via WhatsApp
-* Recebimento de mensagens em tempo real
-* Integração com Webhooks do n8n
-* Automação de cobranças e notificações
-* Base para criação de bots e fluxos inteligentes
+Projeto desenvolvido inicialmente para uma imobiliária, automatizando:
 
----
-
-# Tecnologias Utilizadas
-
-* Node.js
-* Express
-* whatsapp-web.js
-* Axios
-* qrcode-terminal
-* n8n
+- Cobrança de aluguel
+- Lembretes automáticos
+- Recebimento de mensagens
+- Recebimento de comprovantes
+- Integração com Google Sheets
+- Integração com n8n
+- Controle de inadimplência
 
 ---
 
-# Estrutura do Projeto
+# Tecnologias
 
-```bash
-project/
-│
-├── index.js
-├── package.json
-├── .wwebjs_auth/
-├── .wwebjs_cache/
-└── README.md
+- Node.js
+- Express
+- whatsapp-web.js
+- Puppeteer
+- PM2
+- n8n
+- Google Sheets
+- Google Apps Script
+
+---
+
+# Funcionalidades
+
+## Envio de mensagens
+
+A API permite envio de mensagens via endpoint HTTP.
+
+### Endpoint
+
+```http
+POST /send
+```
+
+### Exemplo
+
+```json
+{
+  "numero": "5588999999999",
+  "mensagem": "Olá, tudo bem?"
+}
+```
+
+---
+
+# Recebimento de mensagens
+
+A API escuta mensagens recebidas no WhatsApp e envia automaticamente para o n8n via webhook.
+
+Payload enviado:
+
+```json
+{
+  "messageId": "xxxxx",
+  "timestamp": 1710000000,
+  "timestampISO": "2025-05-24T12:00:00.000Z",
+
+  "numero": "5588999999999",
+  "numeroE164": "+5588999999999",
+
+  "nome": "Cliente",
+
+  "tipo": "text",
+  "mensagem": "Olá",
+
+  "isGrupo": false,
+  "grupoId": null,
+  "grupoNome": null,
+
+  "temMidia": false
+}
+```
+
+---
+
+# QR Code Web
+
+A API possui rota web para autenticação do WhatsApp.
+
+## Abrir QR Code
+
+```http
+GET /qr
+```
+
+Abra no navegador:
+
+```text
+http://localhost:3000/qr
+```
+
+---
+
+# Status da API
+
+## Endpoint
+
+```http
+GET /status
+```
+
+## Retorno
+
+```json
+{
+  "status": "online",
+  "conectado": true,
+  "telefone": "5588999999999@c.us",
+  "timestamp": "2025-05-24T14:00:00.000Z"
+}
 ```
 
 ---
 
 # Instalação
 
-## 1. Clone o projeto
+## Clonar projeto
 
 ```bash
-git clone https://github.com/seu-usuario/seu-repositorio.git
+git clone https://github.com/italo-leonardo/whastapp-api-v2.git
 ```
 
 ---
 
-## 2. Acesse a pasta
+## Entrar na pasta
 
 ```bash
-cd seu-repositorio
+cd whastapp-api-v2
 ```
 
 ---
 
-## 3. Instale as dependências
+## Instalar dependências
 
 ```bash
 npm install
@@ -61,227 +145,161 @@ npm install
 
 ---
 
-# Dependências Necessárias
+# Dependências principais
 
 ```bash
-npm install whatsapp-web.js express axios qrcode-terminal
+npm install express
+npm install axios
+npm install qrcode
+npm install qrcode-terminal
+npm install whatsapp-web.js
 ```
 
 ---
 
-# Executando a API
+# Rodar projeto
 
 ```bash
-node index.js
+node server.js
 ```
 
-Ao executar:
+---
 
-* Um QR Code será exibido no terminal
-* Escaneie utilizando o WhatsApp
-* Após autenticação aparecerá:
+# PM2
+
+## Instalar PM2
 
 ```bash
-✅ WhatsApp conectado!
+npm install -g pm2
 ```
 
 ---
 
-# Endpoint de Envio
-
-## POST /send
-
-Responsável por enviar mensagens via WhatsApp.
-
-### URL
+## Iniciar API
 
 ```bash
-http://localhost:3000/send
+pm2 start server.js --name whatsapp-api
 ```
 
 ---
 
-## Body JSON
-
-```json
-{
-  "numero": "55889999999",
-  "mensagem": "Olá, sua cobrança vence amanhã."
-}
-```
-
----
-
-## Resposta de Sucesso
-
-```json
-{
-  "status": "enviado"
-}
-```
-
----
-
-# Integração com n8n
-
-A API pode receber mensagens do n8n utilizando o node:
-
-* HTTP Request
-
-## Configuração do Node HTTP Request
-
-### Método
+## Ver processos
 
 ```bash
-POST
+pm2 list
 ```
 
-### URL
+---
+
+## Logs
 
 ```bash
-http://localhost:3000/send
-```
-
-### Body JSON
-
-```json
-{
-  "numero": "{{ $json.telefone }}",
-  "mensagem": "Olá {{ $json.nome }}, seu aluguel vence em breve."
-}
+pm2 logs whatsapp-api
 ```
 
 ---
 
-# Recebimento de Mensagens
-
-A API também envia mensagens recebidas do WhatsApp para o n8n utilizando Webhook.
-
----
-
-# Configuração do Webhook no n8n
-
-Crie um node:
-
-* Webhook
-
-## Método
+## Reiniciar
 
 ```bash
-POST
+pm2 restart whatsapp-api
 ```
 
-## Exemplo de URL
+---
+
+## Parar
 
 ```bash
-http://localhost:5678/webhook-test/seu-id
+pm2 stop whatsapp-api
 ```
 
 ---
 
-# Dados Recebidos no n8n
-
-```json
-{
-  "numero": "5588999999999@c.us",
-  "nome": "Teste API",
-  "mensagem": "Olá"
-}
-```
-
----
-
-# Fluxo de Automação Utilizado
+# Estrutura do Projeto
 
 ```text
-Google Sheets → Merge → Code → IF → HTTP Request → WhatsApp
+whatsapp-api-v2/
+│
+├── node_modules/
+├── .wwebjs_auth/
+├── .wwebjs_cache/
+├── package.json
+├── package-lock.json
+├── .gitignore
+├── README.md
+└── server.js
 ```
 
 ---
 
-# Casos de Uso
+# Fluxo com n8n
 
-* Cobrança automática
-* Lembrete de vencimento
-* Notificações automáticas
-* Bot de atendimento
-* Integração com CRM
-* Integração com IA
+O projeto foi integrado ao n8n para automações financeiras.
+
+Fluxos atuais:
+
+- Cobrança automática de aluguel
+- Verificação de inadimplência
+- Lembrete antes do vencimento
+- Ajustes financeiros automáticos
+- Integração com Google Sheets
+- Recebimento de comprovantes
+- Baixa automática futura
 
 ---
 
-# Observações Importantes
+# Segurança
 
-## Sessão do WhatsApp
+A pasta:
 
-As pastas abaixo armazenam sessão e cache:
-
-```bash
-.wwebjs_auth
-.wwebjs_cache
+```text
+.wwebjs_auth/
 ```
 
-Caso ocorram erros estranhos:
+NÃO deve ser enviada para o GitHub.
 
-* delete ambas as pastas
-* reinicie a aplicação
-* escaneie o QR Code novamente
-
----
-
-# Possíveis Erros
-
-## Número inválido
-
-Verifique se o número possui:
-
-* Código do país
-* DDD
-* WhatsApp ativo
-
-Exemplo correto:
-
-```bash
-5588999999999
-```
+Ela contém:
+- sessão do WhatsApp
+- autenticação
+- tokens locais
 
 ---
 
-## QR Code não aparece
+# Produção
 
-Apague:
-
-```bash
-.wwebjs_auth
-.wwebjs_cache
-```
-
-E execute novamente:
-
-```bash
-node index.js
-```
+Projeto preparado para:
+- Linux
+- VPS
+- PM2
+- Docker (futuramente)
+- Nginx (futuramente)
 
 ---
 
-# Melhorias Futuras
+# Roadmap
 
-* Painel administrativo
-* Multiusuário
-* Integração com IA
-* Logs de mensagens
-* Fila de envio
-* Integração com banco de dados
-* Dashboard de cobranças
+## Próximas melhorias
 
----
-
-# Licença
-
-Projeto para fins educacionais e automações privadas.
+- Multi sessão
+- Multi clientes
+- Upload de mídia
+- Reconexão automática avançada
+- Painel administrativo
+- Banco PostgreSQL
+- Docker
+- Logs persistentes
+- Retry automático
+- Controle de fila
+- Webhooks avançados
 
 ---
 
 # Autor
 
-Desenvolvido por Italo Leonardo.
+Italo Leonardo
+
+GitHub:
+https://github.com/italo-leonardo
+
+LinkedIn:
+https://www.linkedin.com/in/italo-leonardo-coelho-oliveira-9a33001bb/

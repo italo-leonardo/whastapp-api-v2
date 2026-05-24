@@ -61,3 +61,11 @@ pids/
 *.bak
 dist/
 build/
+
+# Arquivos de sessão
+session.json
+
+# Logs
+logs/
+*.log
+pm2.log
