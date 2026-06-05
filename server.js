@@ -220,6 +220,20 @@ client.on('message', async msg => {
 // =======================
 // INICIALIZA CLIENT
 // =======================
+client.on('authenticated', () => {
+  console.log('🔐 AUTHENTICATED');
+});
+
+client.on('auth_failure', msg => {
+  console.log('❌ AUTH FAILURE');
+  console.log(msg);
+});
+
+client.on('loading_screen', (percent, message) => {
+  console.log(`⏳ ${percent}% - ${message}`);
+});
+
+// Inicializa por último
 client.initialize();
 
 // =======================
