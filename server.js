@@ -18,7 +18,7 @@ app.use(express.json());
 const PORT = 3000;
 
 const N8N_WEBHOOK =
-  'http://localhost:5678/webhook-test/580cc776-e238-483c-ba4d-cc0811d26576';
+  'https://n8n.srv1709994.hstgr.cloud/webhook/fb429ae1-d3e2-4036-9fe7-e943fd5bd581';
 
 // =======================
 // ESTADO GLOBAL
