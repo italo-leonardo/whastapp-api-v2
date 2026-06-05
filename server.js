@@ -33,6 +33,8 @@ const client = new Client({
   authStrategy: new LocalAuth(),
 
   puppeteer: {
+    executablePath: '/snap/bin/chromium',
+
     headless: true,
 
     args: [
